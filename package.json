@@ -1,0 +1,13 @@
+{
+  "name": "http-websocket-client-server",
+  "version": "1.0.0",
+  "description": "HTTP and WebSocket client-server project",
+  "main": "server/app.js",
+  "scripts": {
+    "start": "node server/app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.8.0"
+  }
+}
