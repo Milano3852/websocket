@@ -9,6 +9,8 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 const keywords = JSON.parse(fs.readFileSync('./server/keywords.json', 'utf8'));
+const cors = require('cors');
+app.use(cors());
 
 app.get('/api/urls', (req, res) => {
   const keyword = req.query.keyword;

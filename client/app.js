@@ -49,10 +49,13 @@ function startDownload(url) {
 
 function updateProgress(event) {
   const data = JSON.parse(event.data);
-  if (data.progress) {
+  
+  if (data.error) {
+    alert(`Error: ${data.error}`);
+  } else if (data.progress) {
     document.getElementById('progress-bar').value = data.progress;
     document.getElementById('progress-text').innerText = `${data.progress}%`;
-
+    
     if (data.progress >= 100) {
       saveContent(data.url, 'Sample content from URL'); // Эмуляция сохранения
     }
@@ -76,19 +79,4 @@ function displayDownloadedContents() {
     contentList.appendChild(li);
   });
   document.getElementById('content-list').style.display = 'block';
-}
-
-function updateProgress(event) {
-  const data = JSON.parse(event.data);
-  
-  if (data.error) {
-    alert(`Error: ${data.error}`);
-  } else if (data.progress) {
-    document.getElementById('progress-bar').value = data.progress;
-    document.getElementById('progress-text').innerText = `${data.progress}%`;
-    
-    if (data.progress >= 100) {
-      saveContent(data.url, 'Sample content from URL'); // Эмуляция сохранения
-    }
-  }
 }
