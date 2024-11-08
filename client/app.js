@@ -8,7 +8,7 @@ function searchUrls() {
     return;
   }
 
-  fetch(`/api/urls?keyword=${keyword}`)
+  fetch(`http://localhost:3000/api/urls?keyword=${keyword}`)
     .then(response => response.json())
     .then(data => {
       if (data.urls) {
@@ -34,18 +34,36 @@ function displayUrls(urls) {
   document.getElementById('url-list').style.display = 'block';
 }
 
+button.onclick = () => startDownload(url);
+
 function startDownload(url) {
-  selectedUrl = url;
-  if (!socket || socket.readyState !== WebSocket.OPEN) {
-    socket = new WebSocket(`ws://${window.location.hostname}:3000`);
-    socket.onmessage = updateProgress;
-  }
+  // Используйте window.location.hostname для получения правильного хоста
+  const socket = new WebSocket(`ws://${window.location.hostname}:3000`);
 
   socket.onopen = () => {
-    socket.send(JSON.stringify({ url }));
-    document.getElementById('download-status').style.display = 'block';
+    console.log('WebSocket connected');
+    socket.send(JSON.stringify({ url: url }));
+  };
+
+  socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    if (data.error) {
+      console.error('Error:', data.error);
+    } else {
+      // Обработать прогресс загрузки
+      console.log('Progress:', data.progress);
+    }
+  };
+
+  socket.onerror = (error) => {
+    console.error('WebSocket Error:', error);
+  };
+
+  socket.onclose = () => {
+    console.log('WebSocket closed');
   };
 }
+
 
 function updateProgress(event) {
   const data = JSON.parse(event.data);
@@ -61,6 +79,7 @@ function updateProgress(event) {
     }
   }
 }
+
 
 function saveContent(url, content) {
   const storedContents = JSON.parse(localStorage.getItem('downloadedContents') || '[]');
